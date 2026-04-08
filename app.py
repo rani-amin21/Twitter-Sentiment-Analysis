@@ -1,6 +1,8 @@
 import streamlit as st
 import pickle
+import pandas as pd
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import matplotlib.pyplot as plt
 
 # -----------------------------
 # PAGE CONFIG
@@ -8,51 +10,14 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 st.set_page_config(page_title="Twitter Sentiment Analysis", layout="wide")
 
 # -----------------------------
-# CUSTOM CSS (Twitter Theme)
-# -----------------------------
-st.markdown("""
-    <style>
-    body {
-        background-color: #0e1117;
-        color: white;
-    }
-
-    .main {
-        background-color: #0e1117;
-    }
-
-    h1, h2, h3 {
-        color: #1DA1F2;
-        text-align: center;
-    }
-
-    .stButton>button {
-        background-color: #1DA1F2;
-        color: white;
-        border-radius: 10px;
-        padding: 10px 20px;
-    }
-
-    .stTextArea textarea {
-        background-color: #192734;
-        color: white;
-        border-radius: 10px;
-    }
-
-    </style>
-""", unsafe_allow_html=True)
-
-# -----------------------------
-# LOAD MODEL & VECTORIZER
+# LOAD MODEL
 # -----------------------------
 model = pickle.load(open("sentiment_model.pkl", "rb"))
 vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
-
 analyzer = SentimentIntensityAnalyzer()
 
-
 # -----------------------------
-# PREPROCESS FUNCTION (same as notebook)
+# PREPROCESS FUNCTION
 # -----------------------------
 def preprocess_text(text):
     import re
@@ -61,87 +26,134 @@ def preprocess_text(text):
     text = re.sub(r"[^a-zA-Z\s]", "", text)
     return text
 
-
 # -----------------------------
-# FINAL PREDICTION FUNCTION
+# FINAL PREDICTION
 # -----------------------------
 def final_prediction(text):
-    # VADER for Neutral
     score = analyzer.polarity_scores(text)
-    if -0.05 < score['compound'] < 0.05:
-        return "Neutral"
 
-    # ML Model
+    if -0.05 < score['compound'] < 0.05:
+        return "Neutral", score
+
     clean = preprocess_text(text)
     vec = vectorizer.transform([clean])
     result = model.predict(vec)[0]
 
     if result == 0:
-        return "Negative"
+        return "Negative", score
     else:
-        return "Positive"
-
+        return "Positive", score
 
 # -----------------------------
-# SIDEBAR NAVIGATION
+# SIDEBAR
 # -----------------------------
-st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["About Project", "Live Analyzer"])
+st.sidebar.title("📌 Navigation")
+page = st.sidebar.radio("Go to", ["About Project", "Live Analyzer", "Batch Analyzer"])
 
 # -----------------------------
 # ABOUT PAGE
 # -----------------------------
 if page == "About Project":
-    st.title("Twitter Sentiment Analysis")
+    st.title("🐦 Twitter Sentiment Analysis")
 
     st.markdown("""
-    ### 📌 Project Description
+    ### 🚀 Advanced Sentiment Analysis System
 
-    This project analyzes sentiment of Twitter text using:
-
-    - Logistic Regression (Machine Learning)
+    This app uses:
+    - Logistic Regression (ML Model)
     - TF-IDF Vectorization
-    - VADER (for Neutral sentiment)
+    - VADER Sentiment Analysis
 
-    ### 🎯 Features
-    - Predicts Positive, Negative, Neutral sentiment
-    - Real-time text analysis
-    - Hybrid ML + NLP approach
-
-    ### 🛠️ Technologies Used
-    - Python
-    - Scikit-learn
-    - Streamlit
-    - NLP (VADER)
+    ### 💡 Features:
+    - Real-time prediction
+    - Neutral detection using VADER
+    - Visualization dashboard
+    - Batch file analysis
     """)
 
 # -----------------------------
-# LIVE ANALYZER PAGE
+# LIVE ANALYZER
 # -----------------------------
 elif page == "Live Analyzer":
 
-    st.markdown("<h1>Twitter Sentiment Analysis</h1>", unsafe_allow_html=True)
-    st.markdown("<h4 style='text-align:center;'>Enter text to analyze sentiment</h4>", unsafe_allow_html=True)
+    st.title("🐦 Twitter Sentiment Analyzer")
 
-    st.write("")
+    user_input = st.text_area("Enter Tweet Text", height=150)
 
-    # Text Input Box (like your screenshot)
-    user_input = st.text_area("Type or paste text to analyze sentiment...", height=200)
-
-    st.write("")
-
-    # Analyze Button
-    if st.button("🚀 Analyze"):
+    if st.button("Analyze"):
 
         if user_input.strip() == "":
-            st.warning("Please enter some text")
+            st.warning("Enter some text!")
         else:
-            result = final_prediction(user_input)
+            sentiment, score = final_prediction(user_input)
 
-            # Output Styling
-            if result == "Positive":
-                st.success(f"😊 Sentiment: {result}")
-            elif result == "Negative":
-                st.error(f"😡 Sentiment: {result}")
+            # RESULT DISPLAY
+            st.subheader("🔍 Prediction Result")
+
+            if sentiment == "Positive":
+                st.success(f"😊 {sentiment}")
+            elif sentiment == "Negative":
+                st.error(f"😡 {sentiment}")
             else:
-                st.warning(f"😐 Sentiment: {result}")
+                st.warning(f"😐 {sentiment}")
+
+            # -----------------------------
+            # VADER SCORES VISUALIZATION
+            # -----------------------------
+            st.subheader("📊 Sentiment Scores")
+
+            st.write("Positive:", score['pos'])
+            st.progress(score['pos'])
+
+            st.write("Negative:", score['neg'])
+            st.progress(score['neg'])
+
+            st.write("Neutral:", score['neu'])
+            st.progress(score['neu'])
+
+            # PIE CHART
+            fig, ax = plt.subplots()
+            labels = ['Positive', 'Negative', 'Neutral']
+            values = [score['pos'], score['neg'], score['neu']]
+
+            ax.pie(values, labels=labels, autopct='%1.1f%%')
+            st.pyplot(fig)
+
+# -----------------------------
+# BATCH ANALYZER (NEW FEATURE)
+# -----------------------------
+elif page == "Batch Analyzer":
+
+    st.title("📂 Bulk Tweet Analyzer")
+
+    uploaded_file = st.file_uploader("Upload CSV file with 'text' column", type=["csv"])
+
+    if uploaded_file:
+        df = pd.read_csv(uploaded_file)
+
+        if "text" not in df.columns:
+            st.error("CSV must contain 'text' column")
+        else:
+            results = []
+
+            for text in df["text"]:
+                sentiment, _ = final_prediction(str(text))
+                results.append(sentiment)
+
+            df["Sentiment"] = results
+
+            st.dataframe(df)
+
+            # BAR CHART
+            st.subheader("📊 Sentiment Distribution")
+            counts = df["Sentiment"].value_counts()
+
+            st.bar_chart(counts)
+
+            # DOWNLOAD BUTTON
+            st.download_button(
+                label="Download Results",
+                data=df.to_csv(index=False),
+                file_name="results.csv",
+                mime="text/csv"
+            )
