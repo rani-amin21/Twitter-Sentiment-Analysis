@@ -96,10 +96,16 @@ elif page == "Live Analyzer":
             else:
                 st.warning(f"😐 {sentiment}")
 
+            # -----------------------------
+            # CONFIDENCE SCORE
+            # -----------------------------
+            confidence = int(abs(score['compound']) * 100)
+            st.write(f"Overall: {confidence}%")
             # PERCENTAGE
             pos = int(score['pos'] * 100)
             neg = int(score['neg'] * 100)
             neu = int(score['neu'] * 100)
+
 
             # SCORES
             st.subheader("📊 Sentiment Scores")
@@ -112,3 +118,4 @@ elif page == "Live Analyzer":
 
             st.write(f"Neutral: {neu}%")
             st.progress(score['neu'])
+
