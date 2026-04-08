@@ -61,6 +61,7 @@ if page == "About Project":
     ### Features
     - Predicts Positive, Negative, Neutral sentiment
     - Real-time text analysis
+    - Overall score
     - Hybrid ML + NLP approach
 
     ### Technologies Used
@@ -97,10 +98,23 @@ elif page == "Live Analyzer":
                 st.warning(f"😐 {sentiment}")
 
             # -----------------------------
-            # CONFIDENCE SCORE
+            # OVERALL SCORE (COMPOUND)
+            # -----------------------------
+            overall = int(score['compound'] * 100)
+
+            st.subheader("⭐ Overall Sentiment Score")
+            st.write(f"Overall Score: {overall}%")
+
+            # Slider visualization (-1 to 1 → 0 to 1)
+            slider_value = (score['compound'] + 1) / 2
+            st.progress(slider_value)
+
+            # -----------------------------
+            # CONFIDENCE
             # -----------------------------
             confidence = int(abs(score['compound']) * 100)
-            st.write(f"Overall: {confidence}%")
+
+            st.write(f"Confidence: {confidence}%")
             # PERCENTAGE
             pos = int(score['pos'] * 100)
             neg = int(score['neg'] * 100)
@@ -108,7 +122,7 @@ elif page == "Live Analyzer":
 
 
             # SCORES
-            st.subheader("📊 Sentiment Scores")
+            st.subheader("📊 Sentiment Scores Breakdown")
 
             st.write(f"Positive: {pos}%")
             st.progress(score['pos'])
