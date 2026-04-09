@@ -95,6 +95,24 @@ elif page == "Live Analyzer":
             else:
                 st.warning(f"😐 {sentiment}")
 
+            import pandas as pd
+
+            df_single = pd.DataFrame({
+                "Tweet": [user_input],
+                "Sentiment": [sentiment]
+            })
+
+            # If already data exists → append
+            if "bulk_data" in st.session_state:
+                st.session_state["bulk_data"] = pd.concat(
+                    [st.session_state["bulk_data"], df_single],
+                    ignore_index=True
+                )
+            else:
+                st.session_state["bulk_data"] = df_single
+
+            st.info("Dashboard updated with this tweet")
+
             overall = int(score['compound'] * 100)
 
             st.subheader("⭐ Overall Sentiment Score")
@@ -175,6 +193,27 @@ elif page == "Bulk Analyzer":
         st.subheader("📊 Results")
         st.dataframe(df_result)
 
+        # Overall bulk sentiment
+        counts = df_result["Sentiment"].value_counts()
+
+        pos = counts.get("Positive", 0)
+        neg = counts.get("Negative", 0)
+        neu = counts.get("Neutral", 0)
+
+        st.subheader("⭐ Overall Sentiment of All Tweets")
+
+        if pos > neg and pos > neu:
+            st.success("Overall Sentiment: Positive 😊")
+        elif neg > pos and neg > neu:
+            st.error("Overall Sentiment: Negative 😡")
+        else:
+            st.warning("Overall Sentiment: Neutral 😐")
+
+        # Show counts also (good for understanding)
+        st.write(f"Positive Tweets: {pos}")
+        st.write(f"Negative Tweets: {neg}")
+        st.write(f"Neutral Tweets: {neu}")
+
         # Save for dashboard
         st.session_state["bulk_data"] = df_result
 
@@ -220,8 +259,8 @@ elif page == "Insights Dashboard":
         st.subheader("🧠 Insights")
 
         if pos > neg:
-            st.success("Overall sentiment is Positive 👍")
+            st.success("Overall sentiment is Positive 😊")
         elif neg > pos:
-            st.error("Overall sentiment is Negative ⚠️")
+            st.error("Overall sentiment is Negative 😡")
         else:
-            st.info("Sentiment is Neutral ⚖️")
+            st.info("Sentiment is Neutral 😐")
