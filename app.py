@@ -41,7 +41,7 @@ def final_prediction(text):
 # SIDEBAR NAVIGATION
 # -----------------------------
 st.sidebar.title("📌 Navigation")
-page = st.sidebar.radio("Go to", ["About Project", "Live Analyzer"])
+page = st.sidebar.radio("Go to", ["About Project", "Live Analyzer", "Bulk Analyzer", "Insights Dashboard"])
 
 # -----------------------------
 # ABOUT PAGE
@@ -53,22 +53,21 @@ if page == "About Project":
     ### Project Description
 
     This project analyzes sentiment of Twitter text using:
-
-    - Logistic Regression (Machine Learning)
+    - Logistic Regression
     - TF-IDF Vectorization
-    - VADER (for accurate sentiment detection)
+    - VADER Sentiment Analysis
 
     ### Features
-    - Predicts Positive, Negative, Neutral sentiment
-    - Real-time text analysis
-    - Overall score
-    - Hybrid ML + NLP approach
-
-    ### Technologies Used
-    - Python
-    - Scikit-learn
-    - Streamlit
-    - NLP (VADER)
+    - Single tweet analysis
+    - Bulk tweet analysis
+    - Insights dashboard
+    - Word cloud visualization
+    
+    ### Technologies Used 
+    - Python 
+    - Scikit-learn 
+    - Streamlit 
+    - NLP 
     """)
 
 # -----------------------------
@@ -87,7 +86,6 @@ elif page == "Live Analyzer":
         else:
             sentiment, score = final_prediction(user_input)
 
-            # RESULT
             st.subheader("🔍 Prediction Result")
 
             if sentiment == "Positive":
@@ -97,31 +95,21 @@ elif page == "Live Analyzer":
             else:
                 st.warning(f"😐 {sentiment}")
 
-            # -----------------------------
-            # OVERALL SCORE (COMPOUND)
-            # -----------------------------
             overall = int(score['compound'] * 100)
 
             st.subheader("⭐ Overall Sentiment Score")
             st.write(f"Overall Score: {overall}%")
 
-            # Slider visualization (-1 to 1 → 0 to 1)
             slider_value = (score['compound'] + 1) / 2
             st.progress(slider_value)
 
-            # -----------------------------
-            # CONFIDENCE
-            # -----------------------------
             confidence = int(abs(score['compound']) * 100)
-
             st.write(f"Confidence: {confidence}%")
-            # PERCENTAGE
+
             pos = int(score['pos'] * 100)
             neg = int(score['neg'] * 100)
             neu = int(score['neu'] * 100)
 
-
-            # SCORES
             st.subheader("📊 Sentiment Scores Breakdown")
 
             st.write(f"Positive: {pos}%")
@@ -133,3 +121,107 @@ elif page == "Live Analyzer":
             st.write(f"Neutral: {neu}%")
             st.progress(score['neu'])
 
+# -----------------------------
+# BULK ANALYZER
+# -----------------------------
+elif page == "Bulk Analyzer":
+
+    st.title("📂 Bulk Tweet Analyzer")
+
+    # Manual Input
+    st.subheader("✍️ Enter Tweets Manually")
+    user_text = st.text_area(
+        "Enter tweets (one per line)",
+        height=150
+    )
+
+    # CSV Upload
+    st.subheader("📤 Upload CSV")
+    uploaded_file = st.file_uploader("Upload CSV (with 'text' column)", type=["csv"])
+
+    if st.button("🚀 Analyze Tweets"):
+
+        import pandas as pd
+
+        tweets = []
+
+        if user_text.strip() != "":
+            tweets = user_text.split("\n")
+
+        elif uploaded_file is not None:
+            df = pd.read_csv(uploaded_file)
+
+            if "text" not in df.columns:
+                st.error("CSV must contain 'text' column")
+                st.stop()
+
+            tweets = df["text"].astype(str).tolist()
+
+        else:
+            st.warning("Enter tweets or upload CSV")
+            st.stop()
+
+        results = []
+
+        for tweet in tweets:
+            sentiment, _ = final_prediction(tweet)
+            results.append(sentiment)
+
+        df_result = pd.DataFrame({
+            "Tweet": tweets,
+            "Sentiment": results
+        })
+
+        st.subheader("📊 Results")
+        st.dataframe(df_result)
+
+        # Save for dashboard
+        st.session_state["bulk_data"] = df_result
+
+# -----------------------------
+# INSIGHTS DASHBOARD
+# -----------------------------
+elif page == "Insights Dashboard":
+
+    st.title("📊 Sentiment Insights Dashboard")
+
+    if "bulk_data" not in st.session_state:
+        st.warning("Please analyze tweets first in Bulk Analyzer")
+    else:
+        df = st.session_state["bulk_data"]
+
+        counts = df["Sentiment"].value_counts()
+
+        st.subheader("📈 Sentiment Distribution")
+        st.bar_chart(counts)
+
+        total = len(df)
+        pos = counts.get("Positive", 0)
+        neg = counts.get("Negative", 0)
+        neu = counts.get("Neutral", 0)
+
+        st.subheader("📊 Summary")
+
+        st.write(f"Positive: {pos} ({int(pos/total*100)}%)")
+        st.write(f"Negative: {neg} ({int(neg/total*100)}%)")
+        st.write(f"Neutral: {neu} ({int(neu/total*100)}%)")
+
+        # WORD CLOUD
+        st.subheader("☁️ Word Cloud")
+
+        from wordcloud import WordCloud
+
+        text = " ".join(df["Tweet"])
+        wc = WordCloud(width=800, height=400).generate(text)
+
+        st.image(wc.to_array())
+
+        # INSIGHTS
+        st.subheader("🧠 Insights")
+
+        if pos > neg:
+            st.success("Overall sentiment is Positive 👍")
+        elif neg > pos:
+            st.error("Overall sentiment is Negative ⚠️")
+        else:
+            st.info("Sentiment is Neutral ⚖️")
