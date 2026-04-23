@@ -27,9 +27,11 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
-html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
-.main { background: #f4f6f9; padding-top: 0 !important; }
-.block-container { padding: 0 2rem 3rem 2rem; max-width: 1400px; }
+html, body, [class*="css"] { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif !important; }
+.main { background: #f4f6f9 !important; padding-top: 0 !important; }
+.block-container { padding: 0 2rem 3rem 2rem !important; max-width: 1400px !important; }
+[data-testid="stAppViewContainer"] { background: #f4f6f9 !important; }
+[data-testid="stMain"] { background: #f4f6f9 !important; }
 #MainMenu, footer, header { visibility: hidden; }
 [data-testid="stSidebar"] { display: none; }
 
@@ -87,14 +89,15 @@ div[data-testid="column"] .stButton > button {
 .badge-lg  { padding: 8px 18px; font-size: 14px; }
 
 /* ── HERO ── */
-.hero { text-align: center; padding: 50px 20px 30px; }
+.hero { text-align: center !important; padding: 50px 20px 30px !important; width: 100% !important; }
+.hero p, .hero h1, .hero-sub, .hero-badge { text-align: center !important; margin-left: auto !important; margin-right: auto !important; }
 .hero-badge {
     display: inline-block; background: #eff6ff; color: #1d9bf0;
     border: 1px solid #bfdbfe; border-radius: 20px; padding: 4px 16px;
     font-size: 12px; font-weight: 600; margin-bottom: 20px;
 }
-.hero h1 { font-size: 52px; font-weight: 800; color: #0f1419; margin: 0 0 16px; line-height: 1.15; }
-.hero h1 span { color: #1d9bf0; }
+.hero h1 { font-size: 52px !important; font-weight: 800 !important; color: #0f1419 !important; margin: 0 0 16px !important; line-height: 1.15 !important; }
+.hero h1 span { color: #1d9bf0 !important; }
 .hero-sub { font-size: 17px; color: #6e7681; max-width: 560px; margin: 0 auto 32px; line-height: 1.6; }
 
 /* ── FEATURE CARDS ── */
@@ -268,6 +271,18 @@ div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
     color: white !important;
     outline: 1.5px solid #bfdbfe !important;
 }
+
+/* ADD this new rule after the existing .nav-btn rules: */
+div[data-testid="column"]:has(.nav-btn) {
+    min-width: 90px !important;
+    flex-shrink: 0 !important;
+}
+.nav-btn > button, .nav-btn-active > button {
+    white-space: nowrap !important;
+    min-width: 80px !important;
+}
+
+
 </style>
 """, unsafe_allow_html=True)
 
