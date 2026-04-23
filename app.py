@@ -416,7 +416,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Nav buttons row
-nav_cols = st.columns([1, 1, 1, 1, 6])
+nav_cols = st.columns([1.2, 1.2, 1.2, 1.2, 5.2])
 pages = ["About", "Live Analyzer", "Bulk Analyzer", "Insights"]
 labels = ["About", "Live", "Bulk", "Insights"]
 for i, (col, pg, lbl) in enumerate(zip(nav_cols[:4], pages, labels)):
@@ -439,7 +439,7 @@ if page == "About":
     st.markdown("""
     <div class="hero">
         <div class="hero-badge">TweetInsightsAI</div>
-        <h1>Twitter <span>Sentiment</span> Analysis</h1>
+        <h1 style="font-size:52px;font-weight:800;color:#0f1419;margin:0 0 16px;line-height:1.15;">Twitter <span style="color:#1d9bf0;">Sentiment</span> Analysis</h1>
         <p class="hero-sub">A clean, interactive web app that classifies tweet sentiment in real time using
         Logistic Regression and VADER — with bulk processing and a rich visual dashboard.</p>
     </div>
