@@ -19,6 +19,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+
 # ─────────────────────────────────────────────
 # GLOBAL CSS
 # ─────────────────────────────────────────────
@@ -50,10 +51,16 @@ html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
 
 /* ── BUTTONS ── */
 .stButton > button {
-    border-radius: 50px !important; font-weight: 600 !important;
+    background-color: #1d9bf0 !important; color: white !important; border-radius: 50px !important; font-weight: 600 !important;
     font-size: 13px !important; transition: all .2s !important;
     padding: 8px 20px !important; border: none !important;
 }
+
+.stButton > button:hover {
+    background-color: #0c85d0 !important;
+    color: white !important;
+}
+
 div[data-testid="column"] .stButton > button {
     width: 100% !important;
 }
@@ -251,12 +258,14 @@ div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
 
 /* Nav button overrides */
 .nav-btn > button {
-    background: transparent !important; color: #4b5563 !important;
+    background: #e6f2ff !important;
+    color: #1d9bf0 !important;
     box-shadow: none !important; border: none !important;
     font-size: 14px !important; padding: 7px 16px !important;
 }
 .nav-btn-active > button {
-    background: #eff6ff !important; color: #1d9bf0 !important;
+    background: #1d9bf0 !important;
+    color: white !important;
     outline: 1.5px solid #bfdbfe !important;
 }
 </style>
