@@ -260,17 +260,27 @@ div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
 }
 
 /* Nav button overrides */
+/* REPLACE the existing nav-btn CSS block with: */
 .nav-btn > button {
     background: #e6f2ff !important;
     color: #1d9bf0 !important;
-    box-shadow: none !important; border: none !important;
-    font-size: 14px !important; padding: 7px 16px !important;
+    box-shadow: none !important;
+    border: none !important;
+    font-size: 13px !important;
+    padding: 7px 12px !important;
+    width: 100% !important;
+    white-space: nowrap !important;
 }
 .nav-btn-active > button {
     background: #1d9bf0 !important;
     color: white !important;
     outline: 1.5px solid #bfdbfe !important;
+    font-size: 13px !important;
+    padding: 7px 12px !important;
+    width: 100% !important;
+    white-space: nowrap !important;
 }
+/* REMOVE the div[data-testid="column"]:has(.nav-btn) block entirely */
 
 /* ADD this new rule after the existing .nav-btn rules: */
 div[data-testid="column"]:has(.nav-btn) {
@@ -416,9 +426,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Nav buttons row
-nav_cols = st.columns([1, 1, 1, 1, 6])
+nav_cols = st.columns([1, 1.3, 1.5, 1, 5.2])
 pages = ["About", "Live Analyzer", "Bulk Analyzer", "Insights"]
-labels = ["About", "Live", "Bulk", "Insights"]
+labels = ["About", "Live Analyzer", "Bulk Analyzer", "Insights"]
 for i, (col, pg, lbl) in enumerate(zip(nav_cols[:4], pages, labels)):
     with col:
         active = st.session_state.page == pg
@@ -439,7 +449,7 @@ if page == "About":
     st.markdown("""
     <div class="hero">
         <div class="hero-badge">TweetInsightsAI</div>
-        <h1>Twitter <span>Sentiment</span> Analysis</h1>
+        <h1 style="font-size:52px;font-weight:800;color:#0f1419 !important;margin:0 0 16px;line-height:1.15;">Twitter <span style="color:#1d9bf0;">Sentiment</span> Analysis</h1>
         <p class="hero-sub">A clean, interactive web app that classifies tweet sentiment in real time using
         Logistic Regression and VADER — with bulk processing and a rich visual dashboard.</p>
     </div>
