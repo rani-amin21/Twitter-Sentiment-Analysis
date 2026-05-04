@@ -27,7 +27,7 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
-html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
+html, body, [class*="css"] { font-family: 'DM Sans', 'Segoe UI', sans-serif; }
 .main { background: #f4f6f9 !important; padding-top: 0 !important; }
 .block-container { padding: 0 2rem 3rem 2rem !important; max-width: 1400px !important; }
 [data-testid="stAppViewContainer"] { background: #f4f6f9 !important; }
@@ -96,8 +96,7 @@ div[data-testid="column"] .stButton > button {
     border: 1px solid #bfdbfe; border-radius: 20px; padding: 4px 16px;
     font-size: 12px; font-weight: 600; margin-bottom: 20px;
 }
-.hero h1 { font-size: 52px !important; font-weight: 800 !important; color: #0f1419 !important; margin: 0 0 16px !important; line-height: 1.15 !important; }
-.hero h1 span { color: #1d9bf0 !important; }
+
 .hero-sub { font-size: 17px; color: #6e7681; max-width: 560px; margin: 0 auto 32px; line-height: 1.6; }
 
 /* ── FEATURE CARDS ── */
@@ -261,7 +260,7 @@ div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
 
 /* Nav button overrides */
 /* REPLACE the existing nav-btn CSS block with: */
-.nav-btn > button {
+.nav-btn .stButton > button {
     background: #e6f2ff !important;
     color: #1d9bf0 !important;
     box-shadow: none !important;
@@ -270,23 +269,25 @@ div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
     padding: 7px 12px !important;
     width: 100% !important;
     white-space: nowrap !important;
+    border-radius: 999px !important;
 }
-.nav-btn-active > button {
+
+.nav-btn-active .stButton > button {
     background: #1d9bf0 !important;
     color: white !important;
-    outline: 1.5px solid #bfdbfe !important;
+    box-shadow: none !important;
+    border: none !important;
     font-size: 13px !important;
     padding: 7px 12px !important;
     width: 100% !important;
     white-space: nowrap !important;
+    border-radius: 999px !important;
+}
 }
 /* REMOVE the div[data-testid="column"]:has(.nav-btn) block entirely */
 
 /* ADD this new rule after the existing .nav-btn rules: */
-div[data-testid="column"]:has(.nav-btn) {
-    min-width: 90px !important;
-    flex-shrink: 0 !important;
-}
+
 .nav-btn > button, .nav-btn-active > button {
     white-space: nowrap !important;
     min-width: 80px !important;
@@ -426,7 +427,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Nav buttons row
-nav_cols = st.columns([1, 1.3, 1.5, 1, 5.2])
+nav_cols = st.columns(5)
 pages = ["About", "Live Analyzer", "Bulk Analyzer", "Insights"]
 labels = ["About", "Live Analyzer", "Bulk Analyzer", "Insights"]
 for i, (col, pg, lbl) in enumerate(zip(nav_cols[:4], pages, labels)):
