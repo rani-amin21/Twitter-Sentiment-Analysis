@@ -427,7 +427,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Nav buttons row
-nav_cols = st.columns(5)
+nav_cols = st.columns(7)
 pages = ["About", "Live Analyzer", "Bulk Analyzer", "Insights"]
 labels = ["About", "Live Analyzer", "Bulk Analyzer", "Insights"]
 for i, (col, pg, lbl) in enumerate(zip(nav_cols[:4], pages, labels)):
