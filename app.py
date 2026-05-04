@@ -430,7 +430,7 @@ st.markdown("""
 nav_cols = st.columns(7)
 pages = ["About", "Live Analyzer", "Bulk Analyzer", "Insights"]
 labels = ["About", "Live Analyzer", "Bulk Analyzer", "Insights"]
-for i, (col, pg, lbl) in enumerate(zip(nav_cols[:4], pages, labels)):
+for col, pg, lbl in zip(nav_cols, pages, labels):
     with col:
         active = st.session_state.page == pg
         btn_class = "nav-btn-active" if active else "nav-btn"
