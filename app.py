@@ -283,7 +283,7 @@ div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
     white-space: nowrap !important;
     border-radius: 999px !important;
 }
-}
+
 /* REMOVE the div[data-testid="column"]:has(.nav-btn) block entirely */
 
 /* ADD this new rule after the existing .nav-btn rules: */
