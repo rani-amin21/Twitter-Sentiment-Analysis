@@ -258,8 +258,7 @@ div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
     font-size: 13px !important;
 }
 
-/* Nav button overrides */
-/* REPLACE the existing nav-btn CSS block with: */
+/* Nav button */
 .nav-btn .stButton > button {
     background: #e6f2ff !important;
     color: #1d9bf0 !important;
@@ -284,22 +283,17 @@ div[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
     border-radius: 999px !important;
 }
 
-/* REMOVE the div[data-testid="column"]:has(.nav-btn) block entirely */
-
-/* ADD this new rule after the existing .nav-btn rules: */
-
 .nav-btn > button, .nav-btn-active > button {
     white-space: nowrap !important;
     min-width: 80px !important;
 }
-
 
 </style>
 """, unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────
-# VADER-LIKE SENTIMENT ENGINE (Pure Python)
+# VADER SENTIMENT ENGINE
 # ─────────────────────────────────────────────
 POSITIVE_WORDS = {
     "love":3,"great":3,"excellent":3,"amazing":3,"wonderful":3,"fantastic":3,"best":3,"awesome":3,
@@ -562,7 +556,6 @@ elif page == "Live Analyzer":
     feed = left.empty()
     chart = right.empty()
 
-    # ----------- PROCESS ONE STEP -----------
     if st.session_state.streaming and st.session_state.i < 100:
 
         tweet = st.session_state.tweets[st.session_state.i]
